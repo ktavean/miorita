@@ -4,10 +4,8 @@ module.exports = {
         browser: true,
         node: true,
     },
-    parserOptions: {
-        parser: "babel-eslint",
-    },
     extends: [
+        "@nuxtjs/eslint-config-typescript",
         "eslint:recommended",
         "airbnb-base",
         "plugin:vue/recommended",
@@ -22,9 +20,22 @@ module.exports = {
     rules: {
         quotes: ["error", "double"],
         indent: ["error", 4],
+        semi: "off",
+        "import/extensions": "off",
+        "@typescript-eslint/semi": ["warn", "always"],
+        "@typescript-eslint/member-delimiter-style": ["error", {
+            multiline: {
+                delimiter: "none",
+                requireLast: true,
+            },
+            singleline: {
+                delimiter: "semi",
+                requireLast: true,
+            },
+        }],
         "comma-dangle": ["error", "always-multiline"],
         "vue/html-indent": ["error", 4],
         "vue/script-indent": ["error", 4],
         "vue/singleline-html-element-content-newline": "off",
     },
-}
+};

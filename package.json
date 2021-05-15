@@ -7,7 +7,7 @@
         "build": "nuxt build",
         "start": "nuxt start",
         "generate": "nuxt generate",
-        "lint:js": "eslint --ext \".js,.vue\" --ignore-path .gitignore .",
+        "lint:js": "eslint --ext \".ts,.js,.vue\" --ignore-path .gitignore .",
         "lint-fix:js": "eslint --fix --ext \".ts,.js,.vue\" --ignore-path .gitignore .",
         "lint:style": "stylelint \"**/*.{vue,css}\" --ignore-path .gitignore",
         "lint-fix:style": "stylelint \"**/*.{vue,css}\" --fix",
@@ -27,13 +27,18 @@
         "@nuxt/content": "^1.14.0",
         "@nuxtjs/pwa": "^3.3.5",
         "core-js": "^3.9.1",
-        "nuxt": "^2.15.3"
+        "nuxt": "^2.15.3",
+        "vue-class-component": "^7.2.6",
+        "vue-property-decorator": "^9.1.2"
     },
     "devDependencies": {
         "@commitlint/cli": "^12.0.1",
         "@commitlint/config-conventional": "^12.0.1",
+        "@nuxt/types": "^2.15.4",
+        "@nuxt/typescript-build": "^2.1.0",
         "@nuxtjs/color-mode": "^2.0.5",
         "@nuxtjs/eslint-config": "^6.0.0",
+        "@nuxtjs/eslint-config-typescript": "^6.0.0",
         "@nuxtjs/eslint-module": "^3.0.2",
         "@nuxtjs/stylelint-module": "^4.0.0",
         "babel-eslint": "^10.1.0",
