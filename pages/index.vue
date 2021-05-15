@@ -1,9 +1,13 @@
 <template>
     <div class="container">
-        <img src="~/assets/img/sheep.svg" alt="Miorita">
+        <World />
     </div>
 </template>
 
 <script>
-export default {}
+import World from "~/components/World.vue";
+
+export default {
+    components: { World },
+};
 </script>
