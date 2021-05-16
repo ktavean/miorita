@@ -1,7 +1,14 @@
-export default interface WorldOptions {
-    sizeX: number
-    sizeY: number
+import WorldCurrent from "~/interfaces/WorldCurrent";
 
-    startX: number
-    startY: number
+export type Coordinates<T=number> = {
+    x: T
+    y: T
+};
+
+export default interface WorldOptions {
+    size: Coordinates
+    start: WorldCurrent
+    walls: Coordinates<Coordinates[]>
+
+    timeout: number
 }

@@ -19,8 +19,8 @@ module.exports = {
     // add your custom rules here
     rules: {
         quotes: ["error", "double"],
-        indent: ["error", 4],
-        semi: "off",
+        indent: "off", // Handled by editorconfig/indent
+        semi: "off", // Handled by @typescript-eslint/semi
         "import/extensions": "off",
         "@typescript-eslint/semi": ["warn", "always"],
         "@typescript-eslint/member-delimiter-style": ["error", {
