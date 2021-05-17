@@ -1,37 +1,45 @@
 <template>
-    <div>
+    <div :class="$style.world">
         <div>
-            <button type="button" @click="run()">
+            <button
+                v-if="!actions"
+                type="button"
+                :class="$style.button"
+                @click="run()"
+            >
                 Run
             </button>
-            <button type="button" @click="reset">
+            <button
+                v-if="!actions"
+                type="button"
+                :class="$style.button"
+                @click="reset"
+            >
                 Reset
             </button>
-            <button type="button" @click="debug">
+            <button
+                v-if="!actions"
+                type="button"
+                :class="$style.button"
+                @click="debug"
+            >
                 Debug
             </button>
-            <button type="button" @click="stepOver">
+            <button
+                v-if="actions && actions.debug"
+                type="button"
+                :class="$style.button"
+                @click="stepOver"
+            >
                 Step over
             </button>
         </div>
-        <table :class="$style.table">
-            <thead>
-                <tr>
-                    <th />
-                    <th
-                        v-for="(col) in range(options.size.x)"
-                        :key="col"
-                    >
-                        {{ col }}
-                    </th>
-                </tr>
-            </thead>
+        <table :class="$style.table" :style="cellWidthStyle">
             <tbody>
                 <tr
                     v-for="(row) in range(options.size.y)"
                     :key="row"
                 >
-                    <th>{{ row }}</th>
                     <td
                         v-for="(col) in range(options.size.x)"
                         :key="col"
@@ -62,7 +70,7 @@
                 </tr>
             </tbody>
         </table>
-        <div>
+        <div ref="console" :class="$style.console">
             <div
                 v-for="(message, index) in moves"
                 :key="message + index"
@@ -74,7 +82,7 @@
                     Miorița turned left (counter-clockwise)
                 </template>
                 <template v-else-if="message === 'rotate-right'">
-                    Miorița turned left (clockwise)
+                    Miorița turned right (clockwise)
                 </template>
                 <template v-else-if="message === 'forward'">
                     Miorița moved forward
@@ -100,15 +108,18 @@
                 <template v-else-if="message === 'end'">
                     Miorița has ended her programming
                 </template>
-                <template v-else-if="message === 'error-orientation'">
+                <span v-else-if="message === 'error-orientation'" :class="$style.error">
                     Miorița is a little dizzy
-                </template>
-                <template v-else-if="message === 'error-map-overflow'">
+                </span>
+                <span v-else-if="message === 'error-map-overflow'" :class="$style.error">
                     Miorița cannot get out of her sheepfold
-                </template>
-                <template v-else-if="message === 'error-wall-hit'">
+                </span>
+                <span v-else-if="message === 'error-wall-hit'" :class="$style.error">
                     Miorița cannot get over the fence
-                </template>
+                </span>
+                <span v-else-if="message.startsWith('error-generic')" :class="$style.error">
+                    {{ message.substring('error-generic-'.length) }}
+                </span>
             </div>
         </div>
     </div>
@@ -116,6 +127,7 @@
 
 <script lang="ts">
 import { Vue, Component, Prop, Watch } from "vue-property-decorator";
+import { Howl } from "howler";
 import WorldOptions, { Coordinates } from "~/interfaces/WorldOptions";
 import WorldCurrent from "~/interfaces/WorldCurrent";
 import Actions from "~/lib/Actions";
@@ -125,7 +137,7 @@ import makeRunner from "~/lib/makeRunner";
 export default class TheWorld extends Vue {
     @Prop({
         default: () => ({
-            size: { x: 8, y: 8 },
+            size: { x: 4, y: 4 },
             start: {
                 position: { x: 0, y: 0 },
                 orientation: "e",
@@ -176,18 +188,23 @@ export default class TheWorld extends Vue {
 
     actions:Actions | null = null;
 
-    @Watch("actions.nextAction")
-    onNextActionChange (nextAction:string) {
-        this.moves.push(`next-${nextAction}`);
-    }
-
     moves:string[] = [];
+
+    @Watch("moves", { deep: true })
+    onMovedUpdated () {
+        this.$nextTick(() => {
+            this.$refs.console.scrollTop = this.$refs.console.scrollHeight;
+        });
+    }
 
     run (debug = false) {
         this.moves = [];
         this.actions = new Actions(this.options, this.current, debug);
         this.actions.onMove((move) => {
             this.moves.push(move);
+            // this.$nextTick(() => {
+            //     this.$refs.console.scrollTop = this.$refs.console.scrollHeight;
+            // });
         });
         const runner = makeRunner(this.$store.state.code);
 
@@ -196,6 +213,9 @@ export default class TheWorld extends Vue {
                 this.moves.push("end");
             })
             .catch((e) => {
+                (new Howl({
+                    src: `${this.$nuxt.context.base}sounds/bleating.mp3`,
+                })).play();
                 if (e.isRunnerError) {
                     this.moves.push(`error-${e.message}`);
                 } else {
@@ -225,6 +245,12 @@ export default class TheWorld extends Vue {
         }
     }
 
+    get cellWidthStyle () {
+        return {
+            "--cell-width": `${100 / Math.max(this.options.size.x, this.options.size.y)}%`,
+        };
+    }
+
     reset () {
         if (this.actions) {
             this.actions.stop();
@@ -244,15 +270,35 @@ export default class TheWorld extends Vue {
 </script>
 
 <style module>
+.world {
+    display: grid;
+    grid-template-rows: 2rem auto 10rem;
+}
+
+.button {
+    padding: 0.2em 0.7em;
+    background: #fff;
+    border: 1px solid currentColor;
+    border-radius: 0.3em;
+    margin: 0.5em;
+    cursor: pointer;
+}
+
+.button:hover,
+.button:focus {
+    background: #333;
+    color: #fff;
+}
+
 .table {
     --cell-width: 10%;
     --wall-color: #c9c9c9;
     --wall-warning-color: rgba(255, 156, 156, 0.44);
 
     width: 100%;
-    border-collapse: collapse;
-    border: 1px solid #eee;
+    border-collapse: separate;
     table-layout: fixed;
+    height: 100%;
 }
 
 .cell {
@@ -281,7 +327,6 @@ export default class TheWorld extends Vue {
     bottom: 0;
     left: 0;
     right: 0;
-    display: grid;
     justify-content: center;
     align-items: center;
     border: 2px solid transparent;
@@ -289,7 +334,8 @@ export default class TheWorld extends Vue {
 }
 
 .cell__img {
-    width: 90%;
+    max-width: 100%;
+    max-height: 100%;
 }
 
 .wall_right {
@@ -337,6 +383,20 @@ export default class TheWorld extends Vue {
 
 .facing_left img {
     transform: scaleX(-1);
+}
+
+.console {
+    display: flex;
+    flex-direction: column;
+    overflow: auto;
+    gap: 0.5em;
+    background: #000;
+    color: #fff;
+    padding: 1rem;
+}
+
+.error {
+    color: #f00;
 }
 
 </style>

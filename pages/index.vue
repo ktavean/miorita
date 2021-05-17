@@ -1,7 +1,7 @@
 <template>
     <div :class="$style.container">
-        <TheEditor />
-        <TheWorld />
+        <TheEditor :class="$style.editor" />
+        <TheWorld :class="$style.world" />
     </div>
 </template>
 
@@ -16,17 +16,32 @@ export default {
 
 <style module>
 .container {
-    display: flex;
-    width: 100vw;
-    height: 100vh;
+    display: grid;
+    grid-template:
+        "Editor World" auto /
+        1fr     1fr
+    ;
 }
+
 .container > * {
     flex-basis: 50%;
 }
 
+.editor {
+    grid-area: Editor;
+}
+
+.world {
+    grid-area: World;
+}
+
 @media (orientation: portrait) {
     .container {
-        flex-direction: column-reverse;
+        grid-template:
+            "World" 1fr
+            "Editor" 1fr /
+            auto
+        ;
     }
 }
 </style>

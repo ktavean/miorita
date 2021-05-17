@@ -3,6 +3,7 @@
         <textarea
             :value="workCode"
             :class="$style.editor"
+            autofocus
             @input="workCode = $event.target.value"
         />
     </div>
@@ -47,5 +48,6 @@ export default class TheEditor extends Vue {
     display: block;
     resize: none;
     flex-grow: 1;
+    border: 0;
 }
 </style>

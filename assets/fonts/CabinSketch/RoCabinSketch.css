@@ -1,0 +1,21 @@
+@font-face {
+    font-family: "CabinSketch";
+    font-style: normal;
+    font-weight: 700;
+    src:
+        url("~/assets/fonts/CabinSketch/RoCabinSketch-Bold.woff2"),
+        url("~/assets/fonts/CabinSketch/RoCabinSketch-Bold.woff"),
+        url("~/assets/fonts/CabinSketch/RoCabinSketch-Bold.ttf"),
+        url("~/assets/fonts/CabinSketch/RoCabinSketch-Bold.svg#RoCabinSketch-Bold");
+}
+
+@font-face {
+    font-family: "CabinSketch";
+    font-style: normal;
+    font-weight: 400;
+    src:
+        url("~/assets/fonts/CabinSketch/RoCabinSketch-Regular.woff2"),
+        url("~/assets/fonts/CabinSketch/RoCabinSketch-Regular.woff"),
+        url("~/assets/fonts/CabinSketch/RoCabinSketch-Regular.ttf"),
+        url("~/assets/fonts/CabinSketch/RoCabinSketch-Regular.svg#RoCabinSketch-Regular");
+}

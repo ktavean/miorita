@@ -1,8 +1,17 @@
 <template>
-    <div>
+    <div class="Layout">
+        <TheHeadbar />
         <Nuxt />
     </div>
 </template>
+
+<script>
+import TheHeadbar from "~/components/TheHeadbar.vue";
+
+export default {
+    components: { TheHeadbar },
+};
+</script>
 
 <style>
 html {
@@ -22,5 +31,28 @@ html {
 *::after {
     box-sizing: border-box;
     margin: 0;
+}
+
+sup {
+    font-size: 0.6em;
+}
+.sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
+}
+
+.Layout {
+    width: 100vw;
+    height: 100vh;
+    overflow: hidden;
+    display: grid;
+    grid-template-rows: 4rem auto;
 }
 </style>

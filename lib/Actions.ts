@@ -103,12 +103,17 @@ class UsableActions {
     }
 
     move () {
-        const { position } = this.nextPosition();
+        try {
+            const { position } = this.nextPosition();
 
-        // @ts-ignore
-        this.current.position = position;
+            // @ts-ignore
+            this.current.position = position;
 
-        this.addMove("forward");
+            this.addMove("forward");
+            return Promise.resolve();
+        } catch (e) {
+            return Promise.reject(e);
+        }
     }
 
     canMove () {
@@ -207,7 +212,7 @@ actions.forEach((action) => {
 
         return new Promise((resolve, reject) => {
             try {
-                this.nextAction = action;
+                this.addMove(`next-${action}`);
                 this.addToQueue(() => {
                     if (this.ended) {
                         reject();
