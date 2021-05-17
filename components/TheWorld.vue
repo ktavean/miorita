@@ -193,6 +193,7 @@ export default class TheWorld extends Vue {
     @Watch("moves", { deep: true })
     onMovedUpdated () {
         this.$nextTick(() => {
+            // @ts-ignore
             this.$refs.console.scrollTop = this.$refs.console.scrollHeight;
         });
     }
