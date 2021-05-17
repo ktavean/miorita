@@ -262,16 +262,20 @@ export default class TheWorld extends Vue {
             return;
         }
 
+        // @ts-ignore
         wrapper.querySelector("table").attributes.style.value = "--cell-width: 1px";
 
         const cellWidth = Math.floor(
             Math.min(
+                // @ts-ignore
                 wrapper.clientWidth / this.options.size.y,
+                // @ts-ignore
                 wrapper.clientHeight / this.options.size.x,
             ),
         );
 
         this.cellWidth = `${cellWidth}px`;
+        // @ts-ignore
         wrapper.querySelector("table").attributes.style.value = `--cell-width: ${cellWidth}px`;
     }
 
@@ -301,6 +305,7 @@ export default class TheWorld extends Vue {
     }
 
     destroyed () {
+        // @ts-ignore
         window.removeEventListener("resize", this.resizeCellListener);
     }
 }
