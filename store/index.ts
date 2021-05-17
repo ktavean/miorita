@@ -20,8 +20,8 @@ export const mutations = {
 type StoreContext = ActionContext<AppState, {}>;
 
 export const actions = {
-    init ({ commit }:StoreContext) {
-        commit("setCode", localStorage.workCode || "");
+    init ({ commit }:StoreContext, code:string) {
+        commit("setCode", code || localStorage.workCode || "");
     },
 
     setCode ({ commit } : StoreContext, value:string) {

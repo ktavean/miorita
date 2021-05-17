@@ -9,10 +9,12 @@
 </template>
 
 <script lang="ts">
-import { Vue, Component } from "vue-property-decorator";
+import { Vue, Component, Prop } from "vue-property-decorator";
 
 @Component
 export default class TheEditor extends Vue {
+    @Prop(String) code?:string;
+
     get workCode () {
         return this.$store.state.code;
     }
@@ -22,7 +24,7 @@ export default class TheEditor extends Vue {
     }
 
     mounted () {
-        this.$store.dispatch("init");
+        this.$store.dispatch("init", this.code);
         this.workCode = this.$store.state.code;
     }
 }

@@ -11,8 +11,6 @@ type MoveFunction = (type:string)=>void;
 class UsableActions {
     options: WorldOptions;
     current: WorldCurrent;
-    moves:string[] = [];
-
     constructor (options:WorldOptions, current:WorldCurrent) {
         this.options = options;
         this.current = current;
@@ -73,7 +71,7 @@ class UsableActions {
                 sign = 1;
                 break;
             default:
-                throw new RunnerError("Unknown orientation");
+                throw new RunnerError("orientation");
         }
 
         // @ts-ignore
@@ -131,8 +129,6 @@ class UsableActions {
     }
 
     addMove (move:string) {
-        this.moves.push(move);
-
         this.moveWatchers.forEach((callback) => {
             callback(move);
         });
@@ -147,8 +143,8 @@ class UsableActions {
 export default class Actions extends UsableActions {
     private queue: QueueFunction[] = [];
     ended = false;
-
     debug: boolean;
+    nextAction = "";
 
     constructor (options:WorldOptions, current:WorldCurrent, debug = false) {
         super(options, current);
@@ -159,6 +155,8 @@ export default class Actions extends UsableActions {
         const MethodsNotActionable = [
             "constructor",
             "nextPosition",
+            "addMove",
+            "onMove",
         ];
         // All functions of the class Actions
         return Object.getOwnPropertyNames(UsableActions.prototype)
@@ -169,9 +167,9 @@ export default class Actions extends UsableActions {
     addToQueue (callback:QueueFunction) {
         this.queue.push(callback);
 
-        // if (!this.debug) {
-        this.stepOver();
-        // }
+        if (!this.debug) {
+            this.stepOver();
+        }
     }
 
     stepOver () {
@@ -209,16 +207,21 @@ actions.forEach((action) => {
 
         return new Promise((resolve, reject) => {
             try {
+                this.nextAction = action;
                 this.addToQueue(() => {
                     if (this.ended) {
                         reject();
                         return;
                     }
                     const out = actionFunction.apply(this, args);
-                    setTimeout(
-                        () => { resolve(out); },
-                        this.options.timeout,
-                    );
+                    if (this.debug) {
+                        resolve(out);
+                    } else {
+                        setTimeout(
+                            () => { resolve(out); },
+                            this.options.timeout,
+                        );
+                    }
                 });
             } catch (e) {
                 this.ended = true;

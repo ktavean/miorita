@@ -1,7 +1,7 @@
 <template>
     <div>
         <div>
-            <button type="button" @click="run">
+            <button type="button" @click="run()">
                 Run
             </button>
             <button type="button" @click="reset">
@@ -10,7 +10,7 @@
             <button type="button" @click="debug">
                 Debug
             </button>
-            <button type="button" @click="debug">
+            <button type="button" @click="stepOver">
                 Step over
             </button>
         </div>
@@ -62,11 +62,60 @@
                 </tr>
             </tbody>
         </table>
+        <div>
+            <div
+                v-for="(message, index) in moves"
+                :key="message + index"
+            >
+                <template v-if="message === 'reset'">
+                    Miorița teleported to the start position
+                </template>
+                <template v-else-if="message === 'rotate-left'">
+                    Miorița turned left (counter-clockwise)
+                </template>
+                <template v-else-if="message === 'rotate-right'">
+                    Miorița turned left (clockwise)
+                </template>
+                <template v-else-if="message === 'forward'">
+                    Miorița moved forward
+                </template>
+                <template v-else-if="message === 'move-possible'">
+                    Miorița realized she can move forward
+                </template>
+                <template v-else-if="message === 'move-blocked'">
+                    Miorița realized she cannot move forward
+                </template>
+                <template v-else-if="message === 'next-turnLeft'">
+                    Miorița will turn left
+                </template>
+                <template v-else-if="message === 'next-turnRight'">
+                    Miorița will turn right
+                </template>
+                <template v-else-if="message === 'next-canMove'">
+                    Miorița is analyzing if she can move forward
+                </template>
+                <template v-else-if="message === 'next-move'">
+                    Miorița will try to move forward
+                </template>
+                <template v-else-if="message === 'end'">
+                    Miorița has ended her programming
+                </template>
+                <template v-else-if="message === 'error-orientation'">
+                    Miorița is a little dizzy
+                </template>
+                <template v-else-if="message === 'error-map-overflow'">
+                    Miorița cannot get out of her sheepfold
+                </template>
+                <template v-else-if="message === 'error-wall-hit'">
+                    Miorița cannot get over the fence
+                </template>
+            </div>
+        </div>
     </div>
 </template>
 
 <script lang="ts">
-import { Vue, Component, Prop } from "vue-property-decorator";
+import { Vue, Component, Prop, Watch } from "vue-property-decorator";
 import WorldOptions, { Coordinates } from "~/interfaces/WorldOptions";
 import WorldCurrent from "~/interfaces/WorldCurrent";
 import Actions from "~/lib/Actions";
@@ -79,7 +128,7 @@ export default class TheWorld extends Vue {
             size: { x: 8, y: 8 },
             start: {
                 position: { x: 0, y: 0 },
-                orientation: "E",
+                orientation: "e",
             },
             walls: {
                 x: [
@@ -98,7 +147,10 @@ export default class TheWorld extends Vue {
         return [...new Array(size)].map((_, index) => index);
     }
 
-    current:WorldCurrent = {};
+    current:WorldCurrent = {
+        position: { x: 0, y: 0 },
+        orientation: "E",
+    };
 
     isCurrent (row:number, col:number) {
         const { current: { position: { x, y } } } = this;
@@ -122,30 +174,55 @@ export default class TheWorld extends Vue {
         return this.hasWallBottom(row - 1, col);
     }
 
-    actions?:Actions;
+    actions:Actions | null = null;
+
+    @Watch("actions.nextAction")
+    onNextActionChange (nextAction:string) {
+        this.moves.push(`next-${nextAction}`);
+    }
+
+    moves:string[] = [];
 
     run (debug = false) {
+        this.moves = [];
         this.actions = new Actions(this.options, this.current, debug);
         this.actions.onMove((move) => {
-            console.log("Doing: ", move);
+            this.moves.push(move);
         });
         const runner = makeRunner(this.$store.state.code);
 
         runner(this.actions)
+            .then(() => {
+                this.moves.push("end");
+            })
             .catch((e) => {
                 if (e.isRunnerError) {
-                    alert(e.message);
+                    this.moves.push(`error-${e.message}`);
                 } else {
+                    this.moves.push(`error-generic-${e.message}`);
                     console.error(e);
                 }
             })
             .then(() => {
-                this.actions = undefined;
+                this.actions = null;
             });
+        if (debug) {
+            this.$nextTick(() => {
+                if (this.actions) {
+                    this.actions.stepOver();
+                }
+            });
+        }
     }
 
     debug () {
         this.run(true);
+    }
+
+    stepOver () {
+        if (this.actions) {
+            this.actions.stepOver();
+        }
     }
 
     reset () {
@@ -157,6 +234,7 @@ export default class TheWorld extends Vue {
             position: { ...start.position },
             orientation: "E",
         };
+        this.moves = [];
     }
 
     created () {
