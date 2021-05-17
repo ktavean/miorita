@@ -1,53 +1,58 @@
 <template>
     <div :class="$style.wrapper">
-        <textarea
-            :value="workCode"
+        <MonacoEditor
+            v-model="workCode"
             :class="$style.editor"
-            autofocus
-            @input="workCode = $event.target.value"
+            language="javascript"
+            :options="{
+                wordWrap: true,
+                minimap: {
+                    enabled: false
+                },
+                overviewRulerBorder: false
+            }"
         />
     </div>
 </template>
 
-<script lang="ts">
-import { Vue, Component, Prop } from "vue-property-decorator";
+<script>
+import MonacoEditor from "vue-monaco";
 
-@Component
-export default class TheEditor extends Vue {
-    @Prop(String) code?:string;
+export default {
+    components: {
+        MonacoEditor,
+    },
 
-    get workCode () {
-        return this.$store.state.code;
-    }
+    props: {
+        code: String,
+    },
 
-    set workCode (value:string) {
-        this.$store.dispatch("setCode", value);
-    }
+    computed: {
+        workCode: {
+            get () {
+                return this.$store.state.code;
+            },
+            set (value) {
+                this.$store.dispatch("setCode", value);
+            },
+        },
+    },
 
     mounted () {
         this.$store.dispatch("init", this.code);
         this.workCode = this.$store.state.code;
-    }
-}
+    },
+};
 </script>
 
 <style module>
 .wrapper {
     display: flex;
-    flex-direction: column;
     width: 100%;
     height: 100%;
+    padding: 1rem;
 }
 .editor {
-    /* you must provide font-family font-size line-height. Example: */
-    font-family: Fira code, Fira Mono, Consolas, Menlo, Courier, monospace;
-    font-size: 14px;
-    line-height: 1.5;
-    padding: 5px;
-    min-height: 10rem;
-    display: block;
-    resize: none;
     flex-grow: 1;
-    border: 0;
 }
 </style>
