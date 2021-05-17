@@ -365,6 +365,7 @@ export default class TheWorld extends Vue {
     justify-content: center;
     align-items: center;
     font-weight: bold;
+    font-size: calc(var(--cell-width) / 3);
     color: #eee;
 }
 
