@@ -11,17 +11,12 @@
         "lint-fix:js": "eslint --fix --ext \".ts,.js,.vue\" --ignore-path .gitignore .",
         "lint:style": "stylelint \"**/*.{vue,css}\" --ignore-path .gitignore",
         "lint-fix:style": "stylelint \"**/*.{vue,css}\" --fix",
-        "lint": "npm run lint:js && npm run lint:style"
+        "lint": "npm run lint:js && npm run lint:style",
+        "prepare": "husky install"
     },
     "lint-staged": {
         "*.{js,vue}": "eslint",
         "*.{css,vue}": "stylelint"
-    },
-    "husky": {
-        "hooks": {
-            "commit-msg": "commitlint -E HUSKY_GIT_PARAMS",
-            "pre-commit": "lint-staged"
-        }
     },
     "dependencies": {
         "@nuxt/content": "^1.14.0",
@@ -51,7 +46,7 @@
         "eslint-plugin-editorconfig": "^3.0.2",
         "eslint-plugin-nuxt": "^2.0.0",
         "eslint-plugin-vue": "^7.7.0",
-        "husky": "^4.3.8",
+        "husky": "^6.0.0",
         "lint-staged": "^11.0.0",
         "stylelint": "^13.12.0",
         "stylelint-config-prettier": "^8.0.2",
