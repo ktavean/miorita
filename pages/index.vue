@@ -16,32 +16,28 @@ export default {
 
 <style module>
 .container {
-    display: grid;
-    grid-template:
-        "Editor World" auto /
-        1fr     1fr
-    ;
-}
-
-.container > * {
-    flex-basis: 50%;
+    display: flex;
 }
 
 .editor {
-    grid-area: Editor;
+    flex-basis: 50%;
 }
 
 .world {
-    grid-area: World;
+    flex-basis: 50%;
 }
 
 @media (orientation: portrait) {
     .container {
-        grid-template:
-            "World" 1fr
-            "Editor" 1fr /
-            auto
-        ;
+        flex-direction: column-reverse;
+    }
+
+    .editor {
+        height: 50%;
+    }
+
+    .world {
+        height: 50%;
     }
 }
 </style>

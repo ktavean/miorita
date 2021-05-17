@@ -34,42 +34,44 @@
                 Step over
             </button>
         </div>
-        <table :class="$style.table" :style="cellWidthStyle">
-            <tbody>
-                <tr
-                    v-for="(row) in range(options.size.y)"
-                    :key="row"
-                >
-                    <td
-                        v-for="(col) in range(options.size.x)"
-                        :key="col"
-                        :class="$style.cell"
+        <div ref="tableWrapper" :class="$style.table_wrapper">
+            <table :class="$style.table" :style="cellWidthStyle">
+                <tbody>
+                    <tr
+                        v-for="(row) in range(options.size.y)"
+                        :key="row"
                     >
-                        <div
-                            :class="{
-                                [$style.cell__inner]: true,
-                                [$style.cell_current]: isCurrent(row, col),
-                                [$style.wall_right]: hasWallRight(row, col),
-                                [$style.wall_left]: hasWallLeft(row, col),
-                                [$style.wall_top]: hasWallTop(row, col),
-                                [$style.wall_bottom]: hasWallBottom(row, col),
-                                [$style.facing_up]: current.orientation === 'N',
-                                [$style.facing_down]: current.orientation === 'S',
-                                [$style.facing_left]: current.orientation === 'W',
-                                [$style.facing_right]: current.orientation === 'E',
-                            }"
+                        <td
+                            v-for="(col) in range(options.size.x)"
+                            :key="col"
+                            :class="$style.cell"
                         >
-                            <img
-                                v-if="isCurrent(row, col)"
-                                src="~/assets/img/character.svg"
-                                alt="Mioara"
-                                :class="$style.cell__img"
+                            <div
+                                :class="{
+                                    [$style.cell__inner]: true,
+                                    [$style.cell_current]: isCurrent(row, col),
+                                    [$style.wall_right]: hasWallRight(row, col),
+                                    [$style.wall_left]: hasWallLeft(row, col),
+                                    [$style.wall_top]: hasWallTop(row, col),
+                                    [$style.wall_bottom]: hasWallBottom(row, col),
+                                    [$style.facing_up]: current.orientation === 'N',
+                                    [$style.facing_down]: current.orientation === 'S',
+                                    [$style.facing_left]: current.orientation === 'W',
+                                    [$style.facing_right]: current.orientation === 'E',
+                                }"
                             >
-                        </div>
-                    </td>
-                </tr>
-            </tbody>
-        </table>
+                                <img
+                                    v-if="isCurrent(row, col)"
+                                    src="~/assets/img/character.svg"
+                                    alt="Mioara"
+                                    :class="$style.cell__img"
+                                >
+                            </div>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
         <div ref="console" :class="$style.console">
             <div
                 v-for="(message, index) in moves"
@@ -246,10 +248,31 @@ export default class TheWorld extends Vue {
         }
     }
 
+    cellWidth = "10%";
+
     get cellWidthStyle () {
         return {
-            "--cell-width": `${100 / Math.max(this.options.size.x, this.options.size.y)}%`,
+            "--cell-width": `${this.cellWidth}`,
         };
+    }
+
+    resizeCell () {
+        const wrapper = this.$refs.tableWrapper;
+        if (!wrapper) {
+            return;
+        }
+
+        wrapper.querySelector("table").attributes.style.value = "--cell-width: 1px";
+
+        const cellWidth = Math.floor(
+            Math.min(
+                wrapper.clientWidth / this.options.size.y,
+                wrapper.clientHeight / this.options.size.x,
+            ),
+        );
+
+        this.cellWidth = `${cellWidth}px`;
+        wrapper.querySelector("table").attributes.style.value = `--cell-width: ${cellWidth}px`;
     }
 
     reset () {
@@ -267,13 +290,26 @@ export default class TheWorld extends Vue {
     created () {
         this.reset();
     }
+
+    resizeCellListener?: ()=>void;
+
+    mounted () {
+        this.resizeCell();
+
+        this.resizeCellListener = this.resizeCell.bind(this);
+        window.addEventListener("resize", this.resizeCellListener);
+    }
+
+    destroyed () {
+        window.removeEventListener("resize", this.resizeCellListener);
+    }
 }
 </script>
 
 <style module>
 .world {
-    display: grid;
-    grid-template-rows: 2rem auto 10rem;
+    display: flex;
+    flex-direction: column;
 }
 
 .button {
@@ -291,15 +327,20 @@ export default class TheWorld extends Vue {
     color: #fff;
 }
 
+.table_wrapper {
+    flex-grow: 1;
+}
+
 .table {
-    --cell-width: 10%;
+    --cell-width: 1rem;
     --wall-color: #c9c9c9;
     --wall-warning-color: rgba(255, 156, 156, 0.44);
 
-    width: 100%;
     border-collapse: separate;
     table-layout: fixed;
-    height: 100%;
+    flex-grow: 1;
+    margin-left: auto;
+    margin-right: auto;
 }
 
 .cell {
@@ -394,6 +435,7 @@ export default class TheWorld extends Vue {
     background: #000;
     color: #fff;
     padding: 1rem;
+    height: 4.5rem;
 }
 
 .error {
