@@ -146,6 +146,10 @@
                 <span v-else-if="message === 'error-stop'" :class="$style.error">
                     Miorița has stopped
                 </span>
+                <span v-else-if="message.startsWith('error-build')" :class="$style.error">
+                    Miorița cannot understand . Here's why:
+                    {{ message.substring('error-build-'.length) }}
+                </span>
                 <span v-else-if="message.startsWith('error-generic')" :class="$style.error">
                     {{ message.substring('error-generic-'.length) }}
                 </span>
@@ -257,7 +261,15 @@ export default class TheWorld extends Vue {
             //     this.$refs.console.scrollTop = this.$refs.console.scrollHeight;
             // });
         });
-        const runner = makeRunner(this.$store.state.code);
+        let runner: (_action: Actions) => Promise<any>;
+
+        try {
+            runner = makeRunner(this.$store.state.code);
+        } catch (e) {
+            this.moves.push(`error-build-${e.message}`);
+            this.actions = null;
+            return;
+        }
 
         runner(this.actions)
             .then(() => {
