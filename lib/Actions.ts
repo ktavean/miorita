@@ -91,7 +91,8 @@ class UsableActions {
         const wallHitTest = sign < 0 ? nextPosition : position;
 
         // @ts-ignore
-        if (walls[axis].some(w => w.x === wallHitTest.x && w.y === wallHitTest.y)) {
+
+        if (walls[axis] && walls[axis].some(w => w.x === wallHitTest.x && w.y === wallHitTest.y)) {
             throw wallHitError;
         }
 

@@ -199,7 +199,8 @@ export default class TheWorld extends Vue {
     }
 
     hasWallRight (row:number, col:number) {
-        return this.options.walls.x.some((pos:Coordinates) => row === pos.y && col === pos.x);
+        return this.options.walls.x &&
+            this.options.walls.x.some((pos:Coordinates) => row === pos.y && col === pos.x);
     }
 
     hasWallLeft (row:number, col:number) {
@@ -207,7 +208,8 @@ export default class TheWorld extends Vue {
     }
 
     hasWallBottom (row:number, col:number) {
-        return this.options.walls.y.some((pos:Coordinates) => row === pos.y && col === pos.x);
+        return this.options.walls.y &&
+            this.options.walls.y.some((pos:Coordinates) => row === pos.y && col === pos.x);
     }
 
     hasWallTop (row:number, col:number) {
