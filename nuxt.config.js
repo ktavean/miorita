@@ -4,14 +4,18 @@ export default {
 
     // Global page headers: https://go.nuxtjs.dev/config-head
     head: {
-        title: "miorita",
+        title: "Miorița by Școala Web",
         meta: [
             { charset: "utf-8" },
             {
                 name: "viewport",
                 content: "width=device-width, initial-scale=1",
             },
-            { hid: "description", name: "description", content: "" },
+            {
+                hid: "description",
+                name: "description",
+                content: "Miorița is a little sheep that can be controlled by coding. A cute introduction to the world of programming.",
+            },
         ],
         link: [{ rel: "icon", type: "image/x-icon", href: "/favicon.ico" }],
     },
