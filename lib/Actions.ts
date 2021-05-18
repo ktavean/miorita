@@ -186,6 +186,8 @@ export default class Actions extends UsableActions {
 
     stop () {
         this.ended = true;
+        // And run next step, which should clear the queue
+        this.stepOver();
     }
 }
 
@@ -215,7 +217,7 @@ actions.forEach((action) => {
                 this.addMove(`next-${action}`);
                 this.addToQueue(() => {
                     if (this.ended) {
-                        reject();
+                        reject(new RunnerError("stop"));
                         return;
                     }
                     const out = actionFunction.apply(this, args);

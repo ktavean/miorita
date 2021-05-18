@@ -37,6 +37,15 @@
                 <i class="micon mi-step-over" />
                 Step over
             </button>
+            <button
+                v-if="actions"
+                type="button"
+                :class="$style.button"
+                @click="stop"
+            >
+                <i class="micon mi-stop" />
+                Stop
+            </button>
         </div>
         <div ref="tableWrapper" :class="$style.table_wrapper">
             <table :class="$style.table" :style="cellWidthStyle">
@@ -122,6 +131,9 @@
                 </span>
                 <span v-else-if="message === 'error-wall-hit'" :class="$style.error">
                     Miorița cannot get over the fence
+                </span>
+                <span v-else-if="message === 'error-stop'" :class="$style.error">
+                    Miorița has stopped
                 </span>
                 <span v-else-if="message.startsWith('error-generic')" :class="$style.error">
                     {{ message.substring('error-generic-'.length) }}
@@ -259,6 +271,12 @@ export default class TheWorld extends Vue {
     stepOver () {
         if (this.actions) {
             this.actions.stepOver();
+        }
+    }
+
+    stop () {
+        if (this.actions) {
+            this.actions.stop();
         }
     }
 
