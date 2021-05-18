@@ -1,3 +1,5 @@
+/* stylelint-disable font-family-no-missing-generic-family-keyword -- Icons do not have a generic family. */
+
 @font-face {
     font-family: 'Mioritza-Icons';
     src: url('~/assets/fonts/icons/Mioritza-Icons.ttf?8m5e8f') format('truetype'),
