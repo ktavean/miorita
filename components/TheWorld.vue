@@ -7,6 +7,7 @@
                 :class="$style.button"
                 @click="run()"
             >
+                <i class="micon mi-run" />
                 Run
             </button>
             <button
@@ -15,6 +16,7 @@
                 :class="$style.button"
                 @click="reset"
             >
+                <i class="micon mi-reset" />
                 Reset
             </button>
             <button
@@ -23,6 +25,7 @@
                 :class="$style.button"
                 @click="debug"
             >
+                <i class="micon mi-debug" />
                 Debug
             </button>
             <button
@@ -31,6 +34,7 @@
                 :class="$style.button"
                 @click="stepOver"
             >
+                <i class="micon mi-step-over" />
                 Step over
             </button>
         </div>
@@ -134,6 +138,8 @@ import WorldOptions, { Coordinates } from "~/interfaces/WorldOptions";
 import WorldCurrent from "~/interfaces/WorldCurrent";
 import Actions from "~/lib/Actions";
 import makeRunner from "~/lib/makeRunner";
+
+import "~/assets/css/icons.css";
 
 @Component
 export default class TheWorld extends Vue {
