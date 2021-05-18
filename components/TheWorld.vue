@@ -73,10 +73,21 @@
                                     [$style.facing_right]: current.orientation === 'E',
                                 }"
                             >
+                                <div
+                                    v-for="(obj, objIndex) in objectsAt(row, col)"
+                                    :key="objIndex + obj.type"
+                                >
+                                    <template v-if="obj.type === 'grass'">
+                                        <GrassObject
+                                            :class="[$style.cell__object, $style.obj_grass]"
+                                            style="fill: green"
+                                        />
+                                    </template>
+                                </div>
                                 <img
                                     v-if="isCurrent(row, col)"
                                     src="~/assets/img/character.svg"
-                                    alt="Mioara"
+                                    alt="Miorița"
                                     :class="$style.cell__img"
                                 >
                             </div>
@@ -150,10 +161,14 @@ import WorldOptions, { Coordinates } from "~/interfaces/WorldOptions";
 import WorldCurrent from "~/interfaces/WorldCurrent";
 import Actions from "~/lib/Actions";
 import makeRunner from "~/lib/makeRunner";
-
+import GrassObject from "~/assets/img/grass.svg?inline";
 import "~/assets/css/icons.css";
 
-@Component
+@Component({
+    components: {
+        GrassObject,
+    },
+})
 export default class TheWorld extends Vue {
     @Prop({
         default: () => ({
@@ -162,14 +177,13 @@ export default class TheWorld extends Vue {
                 position: { x: 0, y: 0 },
                 orientation: "E",
             },
-            walls: {
-                x: [
-                    { x: 0, y: 0 },
-                ],
-                y: [
-                    { x: 1, y: 0 },
-                ],
-            },
+            walls: {},
+            objects: [
+                {
+                    type: "grass",
+                    position: { x: 1, y: 0 },
+                },
+            ],
             timeout: 1000,
         } as WorldOptions),
     }) options!: WorldOptions;
@@ -188,6 +202,12 @@ export default class TheWorld extends Vue {
         const { current: { position: { x, y } } } = this;
 
         return row === y && col === x;
+    }
+
+    objectsAt (row:number, col:number) {
+        return this.options.objects.filter(
+            ({ position: { x, y } }) => row === y && col === x,
+        );
     }
 
     get canReset () {
@@ -418,6 +438,21 @@ export default class TheWorld extends Vue {
 .cell__img {
     max-width: 100%;
     max-height: 100%;
+    position: absolute;
+    z-index: 2;
+}
+
+.cell__object {
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    z-index: 2;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.obj_grass {
+    transform: scale(0.95) translateY(20%);
 }
 
 .wall_right {
@@ -455,15 +490,15 @@ export default class TheWorld extends Vue {
     border-bottom-color: var(--wall-warning-color);
 }
 
-.facing_up img {
+.facing_up .cell__img {
     transform: rotate(-90deg);
 }
 
-.facing_down img {
+.facing_down .cell__img {
     transform: rotate(90deg);
 }
 
-.facing_left img {
+.facing_left .cell__img {
     transform: scaleX(-1);
 }
 

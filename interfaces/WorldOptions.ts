@@ -10,5 +10,10 @@ export default interface WorldOptions {
     start: WorldCurrent
     walls: Coordinates<Coordinates[]>
 
+    objects: {
+        type: string
+        position: Coordinates
+    }[]
+
     timeout: number
 }
