@@ -24,7 +24,10 @@ export default {
     },
 
     props: {
-        code: String,
+        code: {
+            type: String,
+            default: "",
+        },
     },
 
     computed: {
