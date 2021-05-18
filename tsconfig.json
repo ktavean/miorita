@@ -1,41 +1,45 @@
 {
-  "compilerOptions": {
-    "target": "ES5",
-    "module": "ES2015",
-    "moduleResolution": "Node",
-    "lib": [
-      "ESNext",
-      "ESNext.AsyncIterable",
-      "DOM"
-    ],
-    "esModuleInterop": true,
-    "allowJs": true,
-    "sourceMap": true,
-    "strict": true,
-    "noEmit": true,
-    "experimentalDecorators": true,
-    "baseUrl": ".",
-    "paths": {
-      "~/*": [
-        "./*"
-      ],
-      "@/*": [
-        "./*"
-      ]
+    "compilerOptions": {
+        "target": "ES5",
+        "module": "ES2015",
+        "moduleResolution": "Node",
+        "lib": [
+            "ESNext",
+            "ESNext.AsyncIterable",
+            "DOM"
+        ],
+        "esModuleInterop": true,
+        "allowJs": true,
+        "sourceMap": true,
+        "strict": true,
+        "noEmit": true,
+        "experimentalDecorators": true,
+        "baseUrl": ".",
+        "paths": {
+            "~/*": [
+                "./*"
+            ],
+            "@/*": [
+                "./*"
+            ]
+        },
+        "types": [
+            "@nuxt/types",
+            "@nuxt/content",
+            "@nuxtjs/axios",
+            "@types/node",
+            "nuxt-i18n",
+            "@nuxtjs/color-mode",
+            "@nuxtjs/svg"
+        ]
     },
-    "types": [
-      "@nuxt/types",
-      "@nuxt/content",
-      "@nuxtjs/axios",
-      "@types/node",
-      "nuxt-i18n",
-      "@nuxtjs/color-mode"
+    "exclude": [
+        "node_modules",
+        ".nuxt",
+        "dist",
+        "wordpress"
+    ],
+    "files": [
+        "@types/custom.d.ts"
     ]
-  },
-  "exclude": [
-    "node_modules",
-    ".nuxt",
-    "dist",
-    "wordpress"
-  ]
 }
