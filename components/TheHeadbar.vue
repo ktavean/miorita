@@ -119,6 +119,7 @@ export default {
     max-width: 60ch;
     background: #fff;
     padding: 2em;
+    box-shadow: 0.4rem 0.2rem 1rem rgba(224,219,219, 0.69);
 }
 
 .nuxt_content * + * {
