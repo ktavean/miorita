@@ -1,7 +1,7 @@
 <template>
     <div :class="$style.bar">
         <h1 :class="$style.brand">
-            <span :class="$style.main">Miorița</span>
+            <nuxt-link to="/" :class="$style.main">Miorița</nuxt-link>
             <span :class="$style.secondary">
                 by <a href="https://scoalaweb.ro" target="_blank">Școala Web</a>
             </span>
@@ -56,6 +56,7 @@ export default {
     font-family: CabinSketch, sans-serif;
     font-weight: 700;
     font-size: 3rem;
+    text-decoration: none;
 }
 
 .secondary {
