@@ -1,43 +1,37 @@
 <template>
     <div :class="$style.container">
-        <TheEditor :class="$style.editor" />
-        <TheWorld :class="$style.world" />
+        <h2>Lessons</h2>
+        <LessonDescription
+            title="Meet Miorița"
+            to="lessons/1-intro"
+        >
+            Have a quick look at what Miorița can do
+        </LessonDescription>
+        <h2>Playgrounds</h2>
+        <LessonDescription
+            title="Empty playground"
+            to="playgrounds"
+        >
+            Empty code and a 9x9 board where you can move however you want.
+            <br>Miorița starts at the very center of the sheepfold.
+        </LessonDescription>
     </div>
 </template>
 
 <script>
-import TheWorld from "~/components/TheWorld.vue";
-import TheEditor from "~/components/TheEditor.vue";
+import LessonDescription from "~/components/LessonDescription.vue";
 
 export default {
-    components: { TheWorld, TheEditor },
+    components: { LessonDescription },
 };
 </script>
 
 <style module>
 .container {
-    display: flex;
-}
-
-.editor {
-    flex-basis: 50%;
-}
-
-.world {
-    flex-basis: 50%;
-}
-
-@media (orientation: portrait) {
-    .container {
-        flex-direction: column-reverse;
-    }
-
-    .editor {
-        height: 50%;
-    }
-
-    .world {
-        height: 50%;
-    }
+    width: 100%;
+    max-width: 80ch;
+    margin: 1rem auto;
+    box-shadow: 0.4rem 0.2rem 1rem rgba(224,219,219, 0.69);
+    padding: 1rem;
 }
 </style>
