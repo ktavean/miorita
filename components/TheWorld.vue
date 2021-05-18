@@ -11,7 +11,7 @@
                 Run
             </button>
             <button
-                v-if="!actions"
+                v-if="!actions && canReset"
                 type="button"
                 :class="$style.button"
                 @click="reset"
@@ -148,7 +148,7 @@ export default class TheWorld extends Vue {
             size: { x: 4, y: 4 },
             start: {
                 position: { x: 0, y: 0 },
-                orientation: "e",
+                orientation: "E",
             },
             walls: {
                 x: [
@@ -176,6 +176,14 @@ export default class TheWorld extends Vue {
         const { current: { position: { x, y } } } = this;
 
         return row === y && col === x;
+    }
+
+    get canReset () {
+        const { current, options: { start } } = this;
+
+        return current.orientation !== start.orientation ||
+            current.position.x !== start.position.x ||
+            current.position.y !== start.position.y;
     }
 
     hasWallRight (row:number, col:number) {
