@@ -27,10 +27,13 @@ export default class TheLesson extends Vue {
 .container {
     margin: 1rem;
     padding: 0.7rem 1rem;
-    border: 1px solid #eee;
     border-radius: 0.5rem;
-    transition: transform 200ms ease-in-out;
+    transition:
+        transform 200ms ease-in-out,
+        box-shadow 200ms ease-in-out
+    ;
     cursor: pointer;
+    box-shadow: 0 0 0.5rem rgba(224,219,219, 0.69);
 }
 
 .container > h3 {
@@ -41,5 +44,6 @@ export default class TheLesson extends Vue {
 
 .container:hover {
     transform: scale(1.01);
+    box-shadow: 0 0 0.2rem rgba(224,219,219, 0.69);
 }
 </style>
