@@ -574,7 +574,7 @@ export default class TheWorld extends Vue {
     background: #000;
     color: #fff;
     padding: 1rem;
-    height: 4.5rem;
+    height: 7.5rem;
 }
 
 .error {
