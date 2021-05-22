@@ -98,7 +98,7 @@
         </div>
         <div ref="console" :class="$style.console">
             <div
-                v-for="(message, index) in moves"
+                v-for="({message, args}, index) in moves"
                 :key="message + index"
             >
                 <template v-if="message === 'reset'">
@@ -119,6 +119,18 @@
                 <template v-else-if="message === 'move-blocked'">
                     Miorița realized she cannot move forward
                 </template>
+                <template v-else-if="message === 'found'">
+                    Miorița has found "{{ args[0] }}"
+                </template>
+                <template v-else-if="message === 'not-found'">
+                    Miorița has not found "{{ args[0] }}"
+                </template>
+                <template v-else-if="message === 'pick'">
+                    Miorița has picked "{{ args[0] }}"
+                </template>
+                <template v-else-if="message === 'drop'">
+                    Miorița has dropped "{{ args[0] }}"
+                </template>
                 <template v-else-if="message === 'next-turnLeft'">
                     Miorița will turn left
                 </template>
@@ -130,6 +142,15 @@
                 </template>
                 <template v-else-if="message === 'next-move'">
                     Miorița will try to move forward
+                </template>
+                <template v-else-if="message === 'next-found'">
+                    Miorița is trying to find "{{ args[0] }}"
+                </template>
+                <template v-else-if="message === 'next-pick'">
+                    Miorița is trying to pick "{{ args[0] }}"
+                </template>
+                <template v-else-if="message === 'next-drop'">
+                    Miorița is trying to drop "{{ args[0] }}"
                 </template>
                 <template v-else-if="message === 'end'">
                     Miorița has ended her programming
@@ -200,6 +221,7 @@ export default class TheWorld extends Vue {
     current:WorldCurrent = {
         position: { x: 0, y: 0 },
         orientation: "E",
+        picked: {},
     };
 
     isCurrent (row:number, col:number) {
@@ -209,6 +231,9 @@ export default class TheWorld extends Vue {
     }
 
     objectsAt (row:number, col:number) {
+        if (this.actions) {
+            return Object.values(this.actions.objects[`${col}x${row}`] || {});
+        }
         return this.options.objects.filter(
             ({ position: { x, y } }) => row === y && col === x,
         );
@@ -242,7 +267,10 @@ export default class TheWorld extends Vue {
 
     actions:Actions | null = null;
 
-    moves:string[] = [];
+    moves:{
+        message: string
+        args?: any[]
+    }[] = [];
 
     @Watch("moves", { deep: true })
     onMovedUpdated () {
@@ -255,39 +283,36 @@ export default class TheWorld extends Vue {
     run (debug = false) {
         this.moves = [];
         this.actions = new Actions(this.options, this.current, debug);
-        this.actions.onMove((move) => {
-            this.moves.push(move);
-            // this.$nextTick(() => {
-            //     this.$refs.console.scrollTop = this.$refs.console.scrollHeight;
-            // });
+        this.actions.onMove((message, ...args) => {
+            this.moves.push({ message, args });
         });
         let runner: (_action: Actions) => Promise<any>;
 
         try {
             runner = makeRunner(this.$store.state.code);
         } catch (e) {
-            this.moves.push(`error-build-${e.message}`);
+            this.moves.push({ message: `error-build-${e.message}` });
             this.actions = null;
             return;
         }
 
         runner(this.actions)
             .then(() => {
-                this.moves.push("end");
+                this.moves.push({ message: "end" });
             })
             .catch((e) => {
                 (new Howl({
                     src: `${this.$nuxt.context.base}sounds/bleating.mp3`,
                 })).play();
                 if (e.isRunnerError) {
-                    this.moves.push(`error-${e.message}`);
+                    this.moves.push({ message: `error-${e.message}` });
                 } else {
-                    this.moves.push(`error-generic-${e.message}`);
+                    this.moves.push({ message: `error-generic-${e.message}` });
                     console.error(e);
                 }
             })
             .then(() => {
-                this.actions = null;
+                this.actions.ended = true;
             });
         if (debug) {
             this.$nextTick(() => {
@@ -353,6 +378,7 @@ export default class TheWorld extends Vue {
         this.current = {
             position: { ...start.position },
             orientation: "E",
+            picked: {},
         };
         this.moves = [];
     }

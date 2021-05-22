@@ -1,4 +1,5 @@
 import WorldCurrent from "~/interfaces/WorldCurrent";
+import WorldObject from "./WorldObject";
 
 export type Coordinates<T=number> = {
     x: T
@@ -10,10 +11,7 @@ export default interface WorldOptions {
     start: WorldCurrent
     walls: Coordinates<Coordinates[]>
 
-    objects: {
-        type: string
-        position: Coordinates
-    }[]
+    objects: WorldObject[]
 
     timeout: number
 }

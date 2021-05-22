@@ -2,18 +2,47 @@
 import WorldOptions from "~/interfaces/WorldOptions";
 import WorldCurrent from "~/interfaces/WorldCurrent";
 import RunnerError from "~/lib/RunnerError";
+import WorldObject from "../interfaces/WorldObject";
 
 const DIRECTIONS = "NESW";
 
 type QueueFunction = () => any;
-type MoveFunction = (type:string)=>void;
+type MoveFunction = (type:string, ...args:any[])=>void;
 
 class UsableActions {
     options: WorldOptions;
     current: WorldCurrent;
+    objects: {
+        [pos: string]: {
+            [type: string]: WorldObject
+        }
+    } = {};
+
     constructor (options:WorldOptions, current:WorldCurrent) {
         this.options = options;
         this.current = current;
+
+        options.objects.forEach(
+            ({
+                position: { x, y },
+                type,
+                fixed,
+                count,
+            }) => {
+                const objKey = `${x}x${y}`;
+                if (this.objects[objKey] === undefined) {
+                    this.objects[objKey] = {};
+                }
+                const objects = this.objects[objKey];
+
+                objects[type] = {
+                    fixed,
+                    type,
+                    position: { x, y },
+                    count: count || 1,
+                };
+            }, // =>
+        ); // forEach
     }
 
     /**
@@ -128,15 +157,77 @@ class UsableActions {
         }
     }
 
+    pickPossible (type:string) {
+        const { current: { position: { x, y } }, objects } = this;
+        const pickable = objects[`${x}x${y}`]?.[type];
+
+        return pickable && !pickable.fixed &&
+            pickable.type === String(type).toLowerCase();
+    }
+
+    found (type:string) {
+        if (this.pickPossible(type)) {
+            this.addMove("found", type);
+            return true;
+        }
+        this.addMove("not-found", type);
+        return false;
+    }
+
+    pick (type:string) {
+        if (!this.pickPossible(type)) {
+            throw new RunnerError(`pick-${type}`);
+        }
+
+        const { current: { position: { x, y }, picked }, objects } = this;
+        const objKey = `${x}x${y}`;
+
+        if (undefined === picked[type]) {
+            picked[type] = 0;
+        }
+        picked[type] += 1;
+
+        delete objects[objKey];
+
+        this.objects = { ...objects };
+        this.current.picked = { ...picked };
+        this.addMove("pick", type);
+    }
+
+    drop (type:string) {
+        const { current: { position: { x, y }, picked }, objects } = this;
+        const objKey = `${x}x${y}`;
+
+        if (!picked[type]) {
+            throw new RunnerError(`drop${type}`);
+        }
+
+        picked[type] -= 1;
+
+        if (objects[objKey] === undefined) {
+            objects[objKey] = {};
+        }
+        objects[objKey][type] = {
+            type,
+            position: { x, y },
+            fixed: false,
+            count: (objects[objKey][type]?.count || 0) + 1,
+        };
+
+        this.objects = { ...objects };
+        this.current.picked = { ...picked };
+        this.addMove("drop", type);
+    }
+
     reset () {
         this.current.position = { ...this.options.start.position };
         this.current.orientation = this.options.start.orientation;
         this.addMove("reset");
     }
 
-    addMove (move:string) {
+    addMove (move:string, ...args:any[]) {
         this.moveWatchers.forEach((callback) => {
-            callback(move);
+            callback(move, ...args);
         });
     }
 
@@ -150,7 +241,6 @@ export default class Actions extends UsableActions {
     private queue: QueueFunction[] = [];
     ended = false;
     debug: boolean;
-    nextAction = "";
 
     constructor (options:WorldOptions, current:WorldCurrent, debug = false) {
         super(options, current);
@@ -163,6 +253,7 @@ export default class Actions extends UsableActions {
             "nextPosition",
             "addMove",
             "onMove",
+            "pickPossible",
         ];
         // All functions of the class Actions
         return Object.getOwnPropertyNames(UsableActions.prototype)
@@ -215,7 +306,7 @@ actions.forEach((action) => {
 
         return new Promise((resolve, reject) => {
             try {
-                this.addMove(`next-${action}`);
+                this.addMove(`next-${action}`, ...args);
                 this.addToQueue(() => {
                     if (this.ended) {
                         reject(new RunnerError("stop"));

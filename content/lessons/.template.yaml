@@ -16,6 +16,7 @@ worldOptions:
     objects:
         -   type: grass
             position: { x: 1, y: 0 }
+            fixed: false
     timeout: 1000
 
 workCode: |-
