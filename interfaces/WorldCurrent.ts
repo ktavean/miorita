@@ -1,5 +1,4 @@
 import { Coordinates } from "~/interfaces/WorldOptions";
-import WorldObject from "./WorldObject";
 
 export default interface WorldCurrent {
     position: Coordinates
