@@ -2,7 +2,7 @@
     <div :class="$style.world">
         <div>
             <button
-                v-if="!actions"
+                v-if="!isRunning"
                 type="button"
                 :class="$style.button"
                 @click="run()"
@@ -11,7 +11,7 @@
                 Run
             </button>
             <button
-                v-if="!actions && canReset"
+                v-if="!isRunning && canReset"
                 type="button"
                 :class="$style.button"
                 @click="reset"
@@ -20,7 +20,7 @@
                 Reset
             </button>
             <button
-                v-if="!actions"
+                v-if="!isRunning"
                 type="button"
                 :class="$style.button"
                 @click="debug"
@@ -29,7 +29,7 @@
                 Debug
             </button>
             <button
-                v-if="actions && actions.debug"
+                v-if="isRunning && actions.debug"
                 type="button"
                 :class="$style.button"
                 @click="stepOver"
@@ -38,7 +38,7 @@
                 Step over
             </button>
             <button
-                v-if="actions"
+                v-if="isRunning"
                 type="button"
                 :class="$style.button"
                 @click="stop"
@@ -245,6 +245,10 @@ export default class TheWorld extends Vue {
         return current.orientation !== start.orientation ||
             current.position.x !== start.position.x ||
             current.position.y !== start.position.y;
+    }
+
+    get isRunning () {
+        return this.actions && !this.actions.ended;
     }
 
     hasWallRight (row:number, col:number) {
