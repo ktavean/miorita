@@ -83,6 +83,16 @@
                                             style="fill: green"
                                         />
                                     </template>
+                                    <template v-if="obj.type === 'hatchet'">
+                                        <HatchetObject
+                                            :class="[$style.cell__object, $style.obj_hatchet]"
+                                        />
+                                    </template>
+                                    <template v-if="obj.type === 'vitoria'">
+                                        <VitoriaObject
+                                            :class="[$style.cell__object, $style.obj_vitoria]"
+                                        />
+                                    </template>
                                 </div>
                                 <img
                                     v-if="isCurrent(row, col)"
@@ -187,11 +197,15 @@ import WorldCurrent from "~/interfaces/WorldCurrent";
 import Actions from "~/lib/Actions";
 import makeRunner from "~/lib/makeRunner";
 import GrassObject from "~/assets/img/grass.svg?inline";
+import HatchetObject from "~/assets/img/hatchet.svg?inline";
+import VitoriaObject from "~/assets/img/vitoria.svg?inline";
 import "~/assets/css/icons.css";
 
 @Component({
     components: {
         GrassObject,
+        HatchetObject,
+        VitoriaObject,
     },
 })
 export default class TheWorld extends Vue {
@@ -494,6 +508,14 @@ export default class TheWorld extends Vue {
 }
 
 .obj_grass {
+    transform: scale(0.95) translateY(20%);
+}
+
+.obj_hatchet {
+    transform: scale(0.95) translateY(20%);
+}
+
+.obj_vitoria {
     transform: scale(0.95) translateY(20%);
 }
 

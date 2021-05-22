@@ -15,6 +15,15 @@
             Empty code and a 9x9 board where you can move however you want.
             <br>Miorița starts at the very center of the sheepfold.
         </LessonDescription>
+        <LessonDescription
+            title="The Hatchet"
+            to="playgrounds/hatchet"
+        >
+            Based on a Romanian novel,
+            <a href="https://en.wikipedia.org/wiki/The_Hatchet_(novel)" rel="nofollow">The Hatchet</a>,
+            Miorița has to pick the hatchet (axe)
+            and deliver it to Vitoria.
+        </LessonDescription>
     </div>
 </template>
 
