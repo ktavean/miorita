@@ -6,22 +6,91 @@ import WorldObject from "../interfaces/WorldObject";
 
 const DIRECTIONS = "NESW";
 
+const userActions:string[] = [];
+
 type QueueFunction = () => any;
 type MoveFunction = (type:string, ...args:any[])=>void;
 
-class UsableActions {
-    options: WorldOptions;
-    current: WorldCurrent;
+/**
+ * Decorator that makes the provided function queueable, thus usable in user code
+ *
+ * @param speed
+ * @constructor
+ */
+function UserAction ({ speed = 1 } : {speed?:number;} = {}) {
+    return (
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
+        target: Actions,
+        action: string,
+        descriptor: PropertyDescriptor,
+    ) => {
+        const { value: actionFunction } = descriptor;
+
+        userActions.push(action);
+
+        // eslint-disable-next-line no-param-reassign,func-names
+        descriptor.value = function (this:Actions, ...args:[]) {
+            return new Promise((resolve, reject) => {
+                try {
+                    this.addMove(`next-${action}`, ...args);
+                    this.addToQueue(() => {
+                        if (this.ended) {
+                            reject(new RunnerError("stop"));
+                            return;
+                        }
+                        const out = actionFunction.apply(this, args);
+                        if (this.debug) {
+                            resolve(out);
+                        } else {
+                            setTimeout(
+                                () => { resolve(out); },
+                                this.options.timeout * speed,
+                            );
+                        }
+                    });
+                } catch (e) {
+                    this.ended = true;
+                    reject(e);
+                }
+            });
+        };
+    };
+}
+
+/**
+ * Actions performed by the character
+ */
+export default class Actions {
+    /**
+     * Calls queue
+     * @private
+     */
+    private queue: QueueFunction[] = [];
+
+    /**
+     * Flag to determine if the run has ended
+     */
+    ended = false;
+
+    /**
+     * Temporary objects in the world
+     */
     objects: {
         [pos: string]: {
             [type: string]: WorldObject
         }
     } = {};
 
-    constructor (options:WorldOptions, current:WorldCurrent) {
-        this.options = options;
-        this.current = current;
-
+    /**
+     * @param options   Run settings
+     * @param current   Data about the current state of the world
+     * @param debug     Flag to allow debugging (running step-by-step)
+     */
+    constructor (
+        public options:WorldOptions,
+        public current:WorldCurrent,
+        public debug = false,
+    ) {
         options.objects.forEach(
             ({
                 position: { x, y },
@@ -45,9 +114,16 @@ class UsableActions {
         ); // forEach
     }
 
+    static GetActions (): string[] {
+        return userActions;
+    }
+
+    // region User actions
+
     /**
      * Character rotates counter-clockwise
      */
+    @UserAction()
     turnLeft () {
         const { orientation } = this.current;
         let orientationIndex = DIRECTIONS.indexOf(orientation) - 1;
@@ -63,6 +139,7 @@ class UsableActions {
     /**
      * Character rotates clockwise
      */
+    @UserAction()
     turnRight () {
         const { orientation } = this.current;
         let orientationIndex = DIRECTIONS.indexOf(orientation) + 1;
@@ -73,6 +150,124 @@ class UsableActions {
         this.current.orientation = DIRECTIONS[orientationIndex];
         this.addMove("rotate-right");
     }
+
+    /**
+     * Character moves forward
+     */
+    @UserAction()
+    move () {
+        try {
+            const { position } = this.nextPosition();
+
+            // @ts-ignore
+            this.current.position = position;
+
+            this.addMove("forward");
+            return Promise.resolve();
+        } catch (e) {
+            return Promise.reject(e);
+        }
+    }
+
+    /**
+     * Test if a character can move forward
+     */
+    @UserAction({ speed: 0.1 })
+    canMove () {
+        try {
+            this.nextPosition();
+            this.addMove("move-possible");
+            return true;
+        } catch (e) {
+            this.addMove("move-blocked");
+            return false;
+        }
+    }
+
+    /**
+     * Test if there is an object of the provided type
+     *  at the current character position
+     * @param type
+     */
+    @UserAction({ speed: 0.1 })
+    found (type:string) {
+        if (this.pickPossible(type)) {
+            this.addMove("found", type);
+            return true;
+        }
+        this.addMove("not-found", type);
+        return false;
+    }
+
+    /**
+     * Pick an object of the provided type from the coordinates
+     *
+     * @param type
+     */
+    @UserAction()
+    pick (type:string) {
+        if (!this.pickPossible(type)) {
+            throw new RunnerError(`pick-${type}`);
+        }
+
+        const { current: { position: { x, y }, picked }, objects } = this;
+        const objKey = `${x}x${y}`;
+
+        if (undefined === picked[type]) {
+            picked[type] = 0;
+        }
+        picked[type] += 1;
+
+        delete objects[objKey];
+
+        this.objects = { ...objects };
+        this.current.picked = { ...picked };
+        this.addMove("pick", type);
+    }
+
+    /**
+     * Drop an object of the provided type at the current position
+     *
+     * @param type
+     */
+    @UserAction()
+    drop (type:string) {
+        const { current: { position: { x, y }, picked }, objects } = this;
+        const objKey = `${x}x${y}`;
+
+        if (!picked[type]) {
+            throw new RunnerError(`drop${type}`);
+        }
+
+        picked[type] -= 1;
+
+        if (objects[objKey] === undefined) {
+            objects[objKey] = {};
+        }
+        objects[objKey][type] = {
+            type,
+            position: { x, y },
+            fixed: false,
+            count: (objects[objKey][type]?.count || 0) + 1,
+        };
+
+        this.objects = { ...objects };
+        this.current.picked = { ...picked };
+        this.addMove("drop", type);
+    }
+
+    /**
+     * Move the character to the original position
+     */
+    @UserAction({ speed: 0.01 })
+    reset () {
+        this.current.position = { ...this.options.start.position };
+        this.current.orientation = this.options.start.orientation;
+        this.addMove("reset");
+    }
+
+    // endregion
+    // region Helpers
 
     /**
      * Determine the next position
@@ -132,31 +327,12 @@ class UsableActions {
         };
     }
 
-    move () {
-        try {
-            const { position } = this.nextPosition();
-
-            // @ts-ignore
-            this.current.position = position;
-
-            this.addMove("forward");
-            return Promise.resolve();
-        } catch (e) {
-            return Promise.reject(e);
-        }
-    }
-
-    canMove () {
-        try {
-            this.nextPosition();
-            this.addMove("move-possible");
-            return true;
-        } catch (e) {
-            this.addMove("move-blocked");
-            return false;
-        }
-    }
-
+    /**
+     * Test if the character can pick an object of the provided type
+     *  at the current character position
+     *
+     * @param type
+     */
     pickPossible (type:string) {
         const { current: { position: { x, y } }, objects } = this;
         const pickable = objects[`${x}x${y}`]?.[type];
@@ -165,102 +341,37 @@ class UsableActions {
             pickable.type === String(type).toLowerCase();
     }
 
-    found (type:string) {
-        if (this.pickPossible(type)) {
-            this.addMove("found", type);
-            return true;
-        }
-        this.addMove("not-found", type);
-        return false;
-    }
-
-    pick (type:string) {
-        if (!this.pickPossible(type)) {
-            throw new RunnerError(`pick-${type}`);
-        }
-
-        const { current: { position: { x, y }, picked }, objects } = this;
-        const objKey = `${x}x${y}`;
-
-        if (undefined === picked[type]) {
-            picked[type] = 0;
-        }
-        picked[type] += 1;
-
-        delete objects[objKey];
-
-        this.objects = { ...objects };
-        this.current.picked = { ...picked };
-        this.addMove("pick", type);
-    }
-
-    drop (type:string) {
-        const { current: { position: { x, y }, picked }, objects } = this;
-        const objKey = `${x}x${y}`;
-
-        if (!picked[type]) {
-            throw new RunnerError(`drop${type}`);
-        }
-
-        picked[type] -= 1;
-
-        if (objects[objKey] === undefined) {
-            objects[objKey] = {};
-        }
-        objects[objKey][type] = {
-            type,
-            position: { x, y },
-            fixed: false,
-            count: (objects[objKey][type]?.count || 0) + 1,
-        };
-
-        this.objects = { ...objects };
-        this.current.picked = { ...picked };
-        this.addMove("drop", type);
-    }
-
-    reset () {
-        this.current.position = { ...this.options.start.position };
-        this.current.orientation = this.options.start.orientation;
-        this.addMove("reset");
-    }
-
+    /**
+     * Call all the watchers with the provided move
+     *
+     * @param move
+     * @param args
+     */
     addMove (move:string, ...args:any[]) {
         this.moveWatchers.forEach((callback) => {
             callback(move, ...args);
         });
     }
 
+    /**
+     * Callbacks to be run when any move occurs
+     */
     moveWatchers:MoveFunction[] = [];
+
+    /**
+     * Register a callback that will fire during a move
+     *
+     * @param callback
+     */
     onMove (callback:MoveFunction) {
         this.moveWatchers.push(callback);
     }
-}
 
-export default class Actions extends UsableActions {
-    private queue: QueueFunction[] = [];
-    ended = false;
-    debug: boolean;
-
-    constructor (options:WorldOptions, current:WorldCurrent, debug = false) {
-        super(options, current);
-        this.debug = debug;
-    }
-
-    static GetActions () {
-        const MethodsNotActionable = [
-            "constructor",
-            "nextPosition",
-            "addMove",
-            "onMove",
-            "pickPossible",
-        ];
-        // All functions of the class Actions
-        return Object.getOwnPropertyNames(UsableActions.prototype)
-            // ... except the ones that are marked otherwise
-            .filter(action => !MethodsNotActionable.includes(action));
-    }
-
+    /**
+     * Add the provided callback to the queue
+     *
+     * @param callback
+     */
     addToQueue (callback:QueueFunction) {
         this.queue.push(callback);
 
@@ -269,6 +380,9 @@ export default class Actions extends UsableActions {
         }
     }
 
+    /**
+     * Run the next item in the queue
+     */
     stepOver () {
         const callback = this.queue.shift();
         if (typeof callback === "function") {
@@ -281,51 +395,6 @@ export default class Actions extends UsableActions {
         // And run next step, which should clear the queue
         this.stepOver();
     }
+
+    // endregion
 }
-
-// All functions of the class Actions
-const actions = Actions.GetActions();
-
-actions.forEach((action) => {
-    // Save the actual action
-    // @ts-ignore
-    const actionFunction = Actions.prototype[action];
-
-    /**
-     * Replace action function with another function that adds it to the queue
-     *
-     * This is done so actions can be written without worrying about running in debug mode
-     *
-     * @type {function(): Promise<unknown>}
-     */
-    // @ts-ignore
-    // eslint-disable-next-line require-await
-    Actions.prototype[action] = function (...args) {
-        /// The replacement function returns a promise that is resolved
-        ///     only when the callback from the queue is called
-
-        return new Promise((resolve, reject) => {
-            try {
-                this.addMove(`next-${action}`, ...args);
-                this.addToQueue(() => {
-                    if (this.ended) {
-                        reject(new RunnerError("stop"));
-                        return;
-                    }
-                    const out = actionFunction.apply(this, args);
-                    if (this.debug) {
-                        resolve(out);
-                    } else {
-                        setTimeout(
-                            () => { resolve(out); },
-                            this.options.timeout,
-                        );
-                    }
-                });
-            } catch (e) {
-                this.ended = true;
-                reject(e);
-            }
-        });
-    };
-});
