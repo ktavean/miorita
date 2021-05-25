@@ -380,7 +380,7 @@ export default class TheWorld extends Vue {
                 wrapper.clientWidth / this.options.size.y,
                 // @ts-ignore
                 wrapper.clientHeight / this.options.size.x,
-            ),
+            ) * 0.95,
         );
 
         this.cellWidth = `${cellWidth}px`;
