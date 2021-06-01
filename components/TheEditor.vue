@@ -42,7 +42,14 @@ export default {
     },
 
     mounted () {
-        this.$store.dispatch("init", this.code);
+        let { code } = this;
+        if (localStorage.workCodeUrl === window.location.href) {
+            code = localStorage.workCode;
+        } else {
+            localStorage.workCodeUrl = window.location.href;
+        }
+
+        this.$store.dispatch("init", code);
         this.workCode = this.$store.state.code;
     },
 };
