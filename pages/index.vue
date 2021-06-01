@@ -2,10 +2,16 @@
     <div :class="$style.container">
         <h2>Lessons</h2>
         <LessonDescription
-            title="Meet Miorița"
+            title="1. Meet Miorița"
             to="lessons/1-intro"
         >
             Have a quick look at what Miorița can do
+        </LessonDescription>
+        <LessonDescription
+            title="2. Conditional statement (if+else)"
+            to="lessons/2-if"
+        >
+            Learn to run different sets of instructions depending on a condition.
         </LessonDescription>
         <h2>Playgrounds</h2>
         <LessonDescription
