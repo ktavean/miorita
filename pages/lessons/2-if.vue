@@ -9,7 +9,7 @@
                 picked: {},
             },
             walls: {
-                x: Math.random() < 0.6 ? [
+                x: wall ? [
                     {x: 0, y: 1}
                 ] : undefined
             },
@@ -27,7 +27,14 @@
             ],
             timeout: 1000
         }"
-    />
+    >
+        <template #options>
+            <label>
+                <input v-model="wall" type="checkbox">
+                Fence
+            </label>
+        </template>
+    </TheLesson>
 </template>
 
 <script lang="ts">
@@ -38,6 +45,8 @@ import TheLesson from "~/components/TheLesson.vue";
     components: { TheLesson },
 })
 export default class LessonSimpleIf extends Vue {
+    wall:boolean = true;
+
     code:string = `/*
     IF Statement
     ============
