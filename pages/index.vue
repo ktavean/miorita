@@ -48,5 +48,6 @@ export default {
     margin: 1rem auto;
     box-shadow: 0.4rem 0.2rem 1rem rgba(224,219,219, 0.69);
     padding: 1rem;
+    overflow-y: auto;
 }
 </style>
