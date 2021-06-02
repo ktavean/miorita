@@ -46,6 +46,7 @@
                 <i class="micon mi-stop" />
                 Stop
             </button>
+            <slot name="options" />
         </div>
         <div ref="tableWrapper" :class="$style.table_wrapper">
             <table :class="$style.table" :style="cellWidthStyle">

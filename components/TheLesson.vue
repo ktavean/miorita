@@ -1,7 +1,11 @@
 <template>
     <div :class="$style.container">
         <TheEditor :code="code" :class="$style.editor" />
-        <TheWorld :options="options" :class="$style.world" />
+        <TheWorld :options="options" :class="$style.world">
+            <template #options>
+                <slot name="options" />
+            </template>
+        </TheWorld>
     </div>
 </template>
 
