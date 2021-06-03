@@ -53,11 +53,11 @@ export default class LessonSimpleIf extends Vue {
 
     In this scenario, Miorița is very hungry.
     We want to help her reach the closest grass zone.
-    Problem is a wall that may appear at random right in front of her.
+    Problem is a wall that may appear right in front of her.
     When the wall appears, she needs to go around the wall, to the top grass.
-    There is a random chance the wall won't appear, so she can go straight to
-    the bottom grass.
+    Without a wall, she can go straight to the bottom grass.
 
+    We want to handle both cases in the same code.
     For this, we use a special instruction "if()", that accepts a condition.
     The condition is just an instruction that happens to return true or false.
     We also have the "canMove()" instruction which happens to return true when
