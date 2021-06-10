@@ -5,13 +5,19 @@
             title="1. Meet Miorița"
             to="lessons/1-intro"
         >
-            Have a quick look at what Miorița can do
+            Have a quick look at what Miorița can do.
         </LessonDescription>
         <LessonDescription
             title="2. Conditional statement (if+else)"
             to="lessons/2-if"
         >
             Learn to run different sets of instructions depending on a condition.
+        </LessonDescription>
+        <LessonDescription
+            title="3. Loops and variables"
+            to="lessons/3-while"
+        >
+            Find ways to run the same commands multiple times.
         </LessonDescription>
         <h2>Playgrounds</h2>
         <LessonDescription
@@ -26,7 +32,7 @@
             to="playgrounds/hatchet"
         >
             Based on a Romanian novel,
-            <a href="https://en.wikipedia.org/wiki/The_Hatchet_(novel)" rel="nofollow">The Hatchet</a>,
+            <a href="https://en.wikipedia.org/wiki/The_Hatchet_(novel)" rel="nofollow" target="_blank">The Hatchet</a>,
             Miorița has to pick the hatchet (axe)
             and deliver it to Vitoria.
         </LessonDescription>
