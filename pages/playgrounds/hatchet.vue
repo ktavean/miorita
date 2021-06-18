@@ -40,6 +40,8 @@ export default class Hatchet extends Vue {
 
     The hatchet always starts right in front of Miorița.
     Vitoria is always at the bottom-right corner of the sheepfold.
-*/`;
+*/
+
+`;
 }
 </script>
