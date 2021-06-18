@@ -396,7 +396,7 @@ export default class TheWorld extends Vue {
         const { start } = this.options;
         this.current = {
             position: { ...start.position },
-            orientation: "E",
+            orientation: start.orientation || "E",
             picked: {},
         };
         this.moves = [];
