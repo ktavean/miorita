@@ -378,9 +378,9 @@ export default class TheWorld extends Vue {
         const cellWidth = Math.floor(
             Math.min(
                 // @ts-ignore
-                wrapper.clientWidth / this.options.size.y,
+                wrapper.clientWidth / this.options.size.x,
                 // @ts-ignore
-                wrapper.clientHeight / this.options.size.x,
+                wrapper.clientHeight / this.options.size.y,
             ) * 0.95,
         );
 
