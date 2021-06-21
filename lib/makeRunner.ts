@@ -16,10 +16,40 @@ function regexpForAction (action:string) {
     );
 }
 
-const replacers = [
-    {
+type Replacer = {
+    regex: RegExp
+    replacer: string | ((substring:string, ...args:any[]) => string)
+};
+
+const replacers:Replacer[] = [
+    { // Remove block comments
+        regex: /\/\*.*?\*\//gms,
+        replacer: "",
+    },
+    { // Remove line comments
+        regex: /\/\/.*/g,
+        replacer: "",
+    },
+    { // make new function definitions async
         regex: /(?<!async\s+)function/ig,
         replacer: "async function",
+    },
+    { // add "await" before new functions
+        regex: /(?<!async|function|await)(\s+)([a-z_0-9]+)\(/ig,
+        replacer (fullMatch:string, spaces:string, functionName:string) {
+            console.log(fullMatch, functionName);
+
+            if ([
+                "if",
+                "for",
+                "while",
+                "switch",
+            ].includes(functionName)) {
+                return fullMatch;
+            }
+
+            return `${spaces}await ${functionName}(`;
+        },
     },
 ];
 
@@ -37,6 +67,7 @@ export default function makeRunner (code:string): RunnerFunction {
     });
 
     replacers.forEach((matchers) => {
+        // @ts-ignore
         script = script.replace(matchers.regex, matchers.replacer);
     });
 
