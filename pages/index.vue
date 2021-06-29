@@ -17,7 +17,13 @@
             title="3. Loops and variables"
             to="lessons/3-while"
         >
-            Find ways to run the same commands multiple times.
+            Find ways to run the same commands multiple times in succession.
+        </LessonDescription>
+        <LessonDescription
+            title="4. Functions"
+            to="lessons/4-function"
+        >
+            Create your own instructions that you can reuse whenever you want.
         </LessonDescription>
         <h2>Playgrounds</h2>
         <LessonDescription

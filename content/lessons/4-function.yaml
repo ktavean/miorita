@@ -1,0 +1,98 @@
+title: Functions
+description: 'Learn how to'
+
+worldOptions:
+    size:
+        x: 7
+        y: 2
+    start:
+        position: { x: 1, y: 0 }
+        orientation: W
+    walls:
+        x: []
+        y:
+            - { x: 0, y: 0 }
+            - { x: 1, y: 0 }
+            - { x: 2, y: 0 }
+            - { x: 3, y: 0 }
+            - { x: 4, y: 0 }
+            - { x: 5, y: 0 }
+    objects:
+        -   type: hatchet
+            position: { x: 2, y: 1 }
+            fixed: false
+        -   type: vitoria
+            position: { x: 0, y: 0 }
+            fixed: true
+    timeout: 1000
+
+workCode: |-
+    /*
+        Functions
+        ===================
+
+        Repeating code is highly inefficient.
+        We started the previous lesson with the same phrase because it is very important.
+        We learned how to *repeat* code with "while" and "for", but there are times that's not enough.
+        All programming languages allow you to *reuse* snippets of code, usually called functions.
+        The primary benefit, just like with loops, is that changing it once will change it everywhere.
+        More, using functions allows the same code to be executed anywhere we need to.
+    */
+
+    // Functions are declared with the "function" keyword, followed by the name of the function
+    // The name of the function follows the same rules as variables
+    function turnAround() // After the name, we always need a set of parenthesis.
+    // The instructions that a function does are grouped in a block, so we use {curly braces}
+    {
+        turnRight()
+        turnRight()
+    }
+
+    // Those parenthesis allow us to define parameters, which will act like variables inside the function block
+    function superMove(times = 1)
+    {
+        // Parameters can have a default value. If they are not provided, they hold that value
+
+        // Inside a functions, we can use absolutely any instructions we learned.
+        for(var i = 0; i < times; i = i+1) {
+            move()
+        }
+    }
+
+    // Now let's use those functions
+
+    turnAround() // This will cause Miorița to turn right twice, because that's what we defined in the function
+    // Note we always need paranthesis when we use a function
+    // "using a function" is also refered to as "calling a function"
+
+    superMove(6) // Miorița will move forward 6 times
+
+    turnRight() // Fun fact: The instructions we learned so far are themselves functions
+
+    superMove() // When no value is provided for a parameter, the value we set as default will be used
+
+    turnRight()
+
+    superMove(4) // Using different parameters may cause a function to behave differently
+    // This time, we're only moving 4 times.
+
+    pick("hatchet") // Parameters passed to a function can be more than just numbers
+
+    // Let's get Miorița back to Vitoria
+    turnAround()
+    superMove(4)
+    turnAround()
+    turnRight()
+    move()
+    turnAround()
+    turnRight()
+    superMove(5)
+
+    // And finally, we can give Vitoria the hatchet
+    drop("hatchet")
+
+    /*
+    CHALLENGE
+    =========
+    Help Miorița get to the center of the spiral
+    */
