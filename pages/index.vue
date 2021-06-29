@@ -36,6 +36,12 @@
             Miorița has to pick the hatchet (axe)
             and deliver it to Vitoria.
         </LessonDescription>
+        <LessonDescription
+            title="The Escape"
+            to="playgrounds/escape"
+        >
+            Help Miorița escape a random sheepfold.
+        </LessonDescription>
     </div>
 </template>
 
