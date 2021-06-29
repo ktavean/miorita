@@ -109,7 +109,7 @@ export default {
     background: rgba(255, 255, 255, 0.78);
     color: #000;
     border: 1px solid #dcdcdc;
-    z-index: 1;
+    z-index: 3;
     display: grid;
     justify-content: center;
     align-items: center;
