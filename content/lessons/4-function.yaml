@@ -65,7 +65,7 @@ workCode: |-
     // Note we always need paranthesis when we use a function
     // "using a function" is also refered to as "calling a function"
 
-    superMove(6) // Miorița will move forward 6 times
+    superMove(5) // Miorița will move forward 5 times
 
     turnRight() // Fun fact: The instructions we learned so far are themselves functions
 
@@ -90,9 +90,3 @@ workCode: |-
 
     // And finally, we can give Vitoria the hatchet
     drop("hatchet")
-
-    /*
-    CHALLENGE
-    =========
-    Help Miorița get to the center of the spiral
-    */
