@@ -9,6 +9,7 @@
 import TheHeadbar from "~/components/TheHeadbar.vue";
 
 export default {
+    name: "DefaultLayout",
     components: { TheHeadbar },
 };
 </script>
@@ -36,6 +37,7 @@ html {
 sup {
     font-size: 0.6em;
 }
+
 .sr-only {
     position: absolute;
     width: 1px;

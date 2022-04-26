@@ -62,6 +62,7 @@ export default {
     height: 100%;
     padding: 1rem;
 }
+
 .editor {
     flex-grow: 1;
 }

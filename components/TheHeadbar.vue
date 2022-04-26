@@ -65,9 +65,11 @@ export default {
     font-size: 0.5em;
     white-space: nowrap;
 }
+
 .bar a {
     color: inherit;
 }
+
 .bar a:hover,
 .bar a:focus{
     color: #dcdcdc;
@@ -87,6 +89,7 @@ export default {
     cursor: pointer;
     margin-right: 0.5rem;
 }
+
 .about:hover::before {
     background-color: #dcdcdc;
     color: #333;
