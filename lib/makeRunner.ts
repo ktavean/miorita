@@ -77,6 +77,6 @@ export default function makeRunner (code:string): RunnerFunction {
     // eslint-disable-next-line no-new-func
     return new Function(actionVar, `return Promise.resolve().then(async function(){
     ${script};
-    if ('function' === typeof main) main();
+    if ('function' === typeof main) await main();
     });`);
 }
