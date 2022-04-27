@@ -78,7 +78,7 @@ export default {
 .about::before {
     display: inline-grid;
     content: "?";
-    border: 1px solid currentColor;
+    border: 1px solid currentcolor;
     border-radius: 50%;
     justify-content: center;
     align-items: center;
@@ -109,7 +109,7 @@ export default {
     bottom: 0;
     left: 0;
     right: 0;
-    background: rgba(255, 255, 255, 0.78);
+    background: rgba(255 255 255 / 78%);
     color: #000;
     border: 1px solid #dcdcdc;
     z-index: 3;
@@ -123,7 +123,7 @@ export default {
     max-width: 60ch;
     background: #fff;
     padding: 2em;
-    box-shadow: 0.4rem 0.2rem 1rem rgba(224,219,219, 0.69);
+    box-shadow: 0.4rem 0.2rem 1rem rgba(224 219 219 / 69%);
 }
 
 .nuxt_content * + * {

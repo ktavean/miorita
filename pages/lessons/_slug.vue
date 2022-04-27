@@ -6,7 +6,7 @@
 import TheLesson from "~/components/TheLesson.vue";
 
 export default {
-    name: "Lesson",
+    name: "LessonPage",
     components: { TheLesson },
 
     asyncData ({ $content, params, error }) {

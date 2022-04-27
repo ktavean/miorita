@@ -37,8 +37,6 @@ const replacers:Replacer[] = [
     { // add "await" before new functions
         regex: /(?<!async|function|await)(\s+)([a-z_0-9]+)\(/ig,
         replacer (fullMatch:string, spaces:string, functionName:string) {
-            console.log(fullMatch, functionName);
-
             if ([
                 "if",
                 "for",

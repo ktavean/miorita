@@ -1,5 +1,5 @@
 @font-face {
-    font-family: "CabinSketch";
+    font-family: CabinSketch;
     font-style: normal;
     font-weight: 700;
     src:
@@ -10,7 +10,7 @@
 }
 
 @font-face {
-    font-family: "CabinSketch";
+    font-family: CabinSketch;
     font-style: normal;
     font-weight: 400;
     src:

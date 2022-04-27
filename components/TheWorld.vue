@@ -431,7 +431,7 @@ export default class TheWorld extends Vue {
 .button {
     padding: 0.2em 0.7em;
     background: #fff;
-    border: 1px solid currentColor;
+    border: 1px solid currentcolor;
     border-radius: 0.3em;
     margin: 0.5em;
     cursor: pointer;
@@ -450,7 +450,7 @@ export default class TheWorld extends Vue {
 .table {
     --cell-width: 1rem;
     --wall-color: #c9c9c9;
-    --wall-warning-color: rgba(255, 156, 156, 0.44);
+    --wall-warning-color: rgba(255  156 156 / 44%);
 
     border-collapse: separate;
     table-layout: fixed;

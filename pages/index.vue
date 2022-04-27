@@ -55,6 +55,7 @@
 import LessonDescription from "~/components/LessonDescription.vue";
 
 export default {
+    name: "IndexPage",
     components: { LessonDescription },
 };
 </script>
@@ -64,7 +65,7 @@ export default {
     width: 100%;
     max-width: 80ch;
     margin: 1rem auto;
-    box-shadow: 0.4rem 0.2rem 1rem rgba(224,219,219, 0.69);
+    box-shadow: 0.4rem 0.2rem 1rem rgba(224 219 219 / 69%);
     padding: 1rem;
     overflow-y: auto;
 }

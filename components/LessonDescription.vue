@@ -33,7 +33,7 @@ export default class TheLesson extends Vue {
         box-shadow 200ms ease-in-out
     ;
     cursor: pointer;
-    box-shadow: 0 0 0.5rem rgba(224,219,219, 0.69);
+    box-shadow: 0 0 0.5rem rgba(224 219 219 / 69%);
 }
 
 .container > h3 {
@@ -44,6 +44,6 @@ export default class TheLesson extends Vue {
 
 .container:hover {
     transform: scale(1.01);
-    box-shadow: 0 0 0.2rem rgba(224,219,219, 0.69);
+    box-shadow: 0 0 0.2rem rgba(224 219 219 / 69%);
 }
 </style>
