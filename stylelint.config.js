@@ -8,4 +8,10 @@ module.exports = {
         "selector-class-pattern": null,
         "no-empty-source": null,
     },
+    overrides: [
+        {
+            files: ["*.vue", "**/*.vue"],
+            customSyntax: "postcss-html",
+        },
+    ],
 };
