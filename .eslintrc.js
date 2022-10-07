@@ -22,6 +22,8 @@ module.exports = {
         indent: "off", // Handled by editorconfig/indent
         semi: "off", // Handled by @typescript-eslint/semi
         "import/extensions": "off",
+        "import/no-cycle": "off",
+        "import/no-extraneous-dependencies": "off",
         "@typescript-eslint/semi": ["warn", "always"],
         "@typescript-eslint/member-delimiter-style": ["error", {
             multiline: {

@@ -17,7 +17,7 @@ jobs:
         strategy:
             matrix:
                 os: [ ubuntu-latest ]
-                node: [ 14 ]
+                node: [ 17 ]
 
         steps:
             -   name: Checkout 🛎
@@ -37,9 +37,12 @@ jobs:
                     restore-keys: |
                         ${{ runner.os }}-node-
 
+            -   name: Install yarn
+                run: npm install yarn
+
             -   name: Install dependencies 👨🏻‍💻
-                run: npm ci
+                run: yarn
 
             -   name: Run linter 👀
-                run: npm run lint
+                run: yarn run lint
 
