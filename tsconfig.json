@@ -26,11 +26,8 @@
         "types": [
             "@nuxt/types",
             "@nuxt/content",
-            "@nuxtjs/axios",
             "@types/node",
-            "nuxt-i18n",
             "@nuxtjs/color-mode",
-            "@nuxtjs/svg"
         ]
     },
     "exclude": [
@@ -40,6 +37,6 @@
         "wordpress"
     ],
     "files": [
-        "@types/custom.d.ts"
+        "node_modules/@types/custom.d.ts"
     ]
 }
